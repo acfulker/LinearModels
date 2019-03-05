@@ -5,24 +5,6 @@ import pickle
 from sklearn.datasets import make_classification
 import math
 
-def testOLERegression(w,Xtest,ytest):
-    # Inputs:
-    # w = d x 1
-    # Xtest = N x d
-    # ytest = N x 1
-    # Output:
-    # rmse = scalar value
-
-    # IMPLEMENT THIS METHOD - REMOVE THE NEXT LINE
-    N = Xtest.shape[0]
-    jw = 0
-    for i in range(1, N):
-        lhs = ytest[i]
-        rhs = np.matmul(w.T, Xtest[i])
-        jw = jw + math.pow(lhs - rhs, 2)
-    rmse = math.sqrt(1/Xtest.shape[0] * jw)
-    return rmse
-
 def regressionObjVal(w, X, y):
 
     # compute squared error (scalar) with respect
@@ -34,14 +16,16 @@ def regressionObjVal(w, X, y):
     # y = N x 1
     # Output:
     # error = scalar value
-
+    w=w[:,np.newaxis]
     n = X.shape[0]
     sum = 0
-    for i in range(1, n):
-        rhs = np.matmul(w.T, X[i])
+    for i in range(n):
+        wt=w.T
+        xi=X[i,:]
+        xi=xi[:,np.newaxis]
+        rhs = np.matmul(wt, xi)
         sum = sum + math.pow(y[i] - rhs, 2)
     error = 1/2 * sum
-
     return error
 
 def regressionGradient(w, X, y):
@@ -54,8 +38,7 @@ def regressionGradient(w, X, y):
     # y = N x 1
     # Output:
     # gradient = d length vector (not a d x 1 matrix)
-    if len(w.shape) == 1:
-        w = w[:,np.newaxis]
+    w = w[:,np.newaxis]
     _x = np.matmul(X.T, X)
     lhs = np.matmul(_x, w)
     rhs = np.matmul(X.T, y)

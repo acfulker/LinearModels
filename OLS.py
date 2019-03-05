@@ -12,9 +12,15 @@ def learnOLERegression(X, y):
     # Output:
     # w = d x 1
     # IMPLEMENT THIS METHOD - REMOVE THE NEXT LINE
+    
     trans_X = X.T
-    XTX = np.matmul(trans_X, X)
-    inverse = np.linalg.inv(XTX)
+    XTX = np.matmul(trans_X, X)    
+    
+    if(np.linalg.det(XTX)==0):
+        inverse = np.linalg.pinv(XTX)
+    else:
+        inverse = np.linalg.inv(XTX)
+    
     new_X = np.matmul(inverse, trans_X)
     w = np.matmul(new_X, y)
 
@@ -32,13 +38,14 @@ def testOLERegression(w,Xtest,ytest):
     N = Xtest.shape[0]
     jw = 0
     wt=w.T
-    for i in range(0, N-1):
-        lhs = ytest[i]
-        xi=Xtest[i]
+    for i in range(N):
+        lhs = ytest[i,:]
+        lhs=lhs[:,np.newaxis]
+        xi=Xtest[i,:]
         xi=xi[:,np.newaxis]
         rhs =np.matmul(wt,xi)
         jw = jw + math.pow(lhs - rhs, 2)
-    rmse = math.sqrt(1/Xtest.shape[0] * jw)
+    rmse = math.sqrt(1/N * jw)
     return rmse
 
 if __name__ == '__main__':
