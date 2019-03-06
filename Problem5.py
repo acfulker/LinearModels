@@ -69,14 +69,17 @@ def trainSGDSVM(X, y, T, eta=0.01):
     for t in range(T):
         for i in sample:
             yi=y[i,:]
+            yi=yi[:,np.newaxis]
             wt=w.T
             xi=X[i,:]
-            val = yi * wt
+            xi=xi[:,np.newaxis]
+            val = np.matmul(yi,wt)
             check = np.matmul(val, xi)
+            check=check.reshape(-1)
             if not check[0] < 1:
                 continue
-            error=yi*X[None,i,:]
-            w=w+eta*error.T
+            error=yi*xi
+            w=w+eta*error
 
     return w
 
