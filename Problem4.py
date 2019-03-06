@@ -15,16 +15,20 @@ def logisticObjVal(w, X, y):
     # Output:
     # error = scalar
     #print(w.shape[0])
-    if len(w.shape) == 1:
-        w = w[:, np.newaxis]
     # IMPLEMENT THIS METHOD - REMOVE THE NEXT LINE
+    w = w[:, np.newaxis]
     n = X.shape[0]
     error = 0
     sum = 0
-    # val = y @ w.T       # N x d
-    for i in range(1, n):
-        val = np.matmul(y[i], w.T)
-        e_val = np.matmul(val, X[i])
+
+    for i in range(n):
+        yi=y[i]
+        yi=yi[:,np.newaxis]
+        wt=w.T
+        xi=X[i,:]
+        xi=xi[:,np.newaxis]
+        val = np.matmul(yi, wt)
+        e_val = np.matmul(val, xi)
         log_val = np.log(1 + math.exp(-e_val))
         sum = sum + log_val
     error = 1/n * sum
@@ -41,28 +45,26 @@ def logisticGradient(w, X, y):
     # y = N x 1
     # Output:
     # error = d length gradient vector (not a d x 1 matrix)
-    print("grad\n")
-    if len(w.shape) == 1:
-        w = w[:,np.newaxis]
     # IMPLEMENT THIS METHOD - REMOVE THE NEXT LINE
     n = X.shape[0]
-
+    w = w[:,np.newaxis]
+    wt=w.T
     sum = 0
-    for i in range(1, n):
-        h=X[i]
-        expect=y[i]
-        val = np.matmul(y[i], w.T)
-        e_val = np.matmul(val, X[i])
+    for i in range(n):
+        xi=X[i,:]
+        xi=xi[:,np.newaxis]
+        yi=y[i]
+        yi=yi[:,np.newaxis]
+        val = np.matmul(yi, wt)
+        e_val = np.matmul(val, xi)
         down = 1 + np.exp(e_val)
-        #same result either work
-        #expression = y[i]/down
-        #up = expression*X[i]
-        #sum=sum+up
+        expression=yi/down
+        res=expression*xi
+        res=res.reshape(-1)
+        sum = sum + res
         
-        up = np.multiply(y[i], X[i])
-        sum = sum + (up / down)
+        
     gradient = -1/n * sum
-    print(gradient.shape)
     return gradient
 
 
@@ -76,29 +78,26 @@ def logisticHessian(w, X, y):
     # y = N x 1
     # Output:
     # Hessian = d x d matrix
-    print("Hess\n");
-    if len(w.shape) == 1:
-        w = w[:, np.newaxis]
     # IMPLEMENT THIS METHOD - REMOVE THE NEXT LINE
+    w = w[:, np.newaxis]
+    wt=w.T
     n = X.shape[0]
     sum = 0
-    for i in range(1, n):
-        
+    for i in range(n):
         yi=y[i]
-        wt=w.T
-        xi=X[i]
+        yi=yi[:,np.newaxis]
+        xi=X[i,:]
         xi = xi[:, np.newaxis]
         val = np.matmul(yi, wt)
         e_val = np.matmul(val, xi)
         down = 1 + math.exp(e_val)
         down_sq = math.pow(down, 2)
         up = math.exp(e_val)
-        expression=up/down
+        expression=up/down_sq
         out= np.matmul(xi,xi.T)
         full=expression*out
         sum = sum + full
     hessian = 1/n * sum
-    print(hessian.shape)
     return hessian
 
 if __name__ == '__main__':

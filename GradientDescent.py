@@ -16,11 +16,10 @@ def regressionObjVal(w, X, y):
     # y = N x 1
     # Output:
     # error = scalar value
-    w=w[:,np.newaxis]
     n = X.shape[0]
     sum = 0
+    wt=w.T
     for i in range(n):
-        wt=w.T
         xi=X[i,:]
         xi=xi[:,np.newaxis]
         rhs = np.matmul(wt, xi)
